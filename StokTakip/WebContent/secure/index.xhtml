@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" 
+	template="/template/layout.xhtml">
+	
+	<ui:define name="pageContent">
+	<h:form id="frmSkart">
+			<p:dataTable var="skart" value="#{indexController.list}" rows="10"
+                         paginator="true"  selectionMode="single" selection="#{indexController.slcSkart}" rowKey="#{skart.id}"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                         <p:ajax event="rowSelect" oncomplete="PF('dlgSkart').show();" update=":frmSkart:dlgSkart"></p:ajax>
+				<p:column headerText="Id">
+					<h:outputText value="#{skart.id}" />
+				</p:column>
+				<p:column headerText="Adı">
+					<h:outputText value="#{skart.tanim}" />
+				</p:column>
+
+				<p:column headerText="Eklenme Tarihi" width="250">
+					<p:calendar value="#{skart.eklenmeTarihi}" disabled="true" pattern="MM/dd/yyyy HH:mm" />
+				</p:column>
+
+				<p:column headerText="Kod">
+					<h:outputText value="#{skart.kod}"  />
+				</p:column>
+				<p:column headerText="Birim Fiyat">
+					<h:outputText value="#{skart.birimFiyat}" >
+					<f:convertNumber pattern="#0.00" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Kart Tipi">
+					<h:outputText value="#{skart.skartTip.tanim}" />
+				</p:column>
+			<f:facet name="footer">
+				<p:commandButton  action="#{indexController.yeni}" update=":frmSkart:dlgSkart" oncomplete="PF('dlgSkart').show();" value="Yeni"></p:commandButton>
+			</f:facet>
+			</p:dataTable>
+
+			<p:dialog id="dlgSkart" widgetVar="dlgSkart">
+				<p:panelGrid columns="2">
+					<f:facet name="header">
+					İçerik
+				</f:facet>
+
+					<h:outputText value="Tanım :" />
+					<p:inputText value="#{indexController.slcSkart.tanim}" />
+
+					<h:outputText value="Kod :" />
+					<p:inputText value="#{indexController.slcSkart.kod}" />
+
+					<h:outputText value="Birim Fiyat" />
+					<p:inputText value="#{indexController.slcSkart.birimFiyat}" />
+
+					<h:outputText value="Ekleme Tarihi :" />
+					<p:calendar value="#{indexController.slcSkart.eklenmeTarihi}" />
+
+					<h:outputText value="Stok Tipi :" />
+					<p:selectOneMenu converter="#{skartTipConverter}"  value="#{indexController.slcSkart.skartTip}" >
+						<f:selectItems value="#{indexController.skartTipList}" var="skartTip" 
+						itemLabel="#{skartTip.tanim}" itemValue="#{skartTip}" ></f:selectItems>
+					</p:selectOneMenu>
+					
+					<p:commandButton actionListener="#{indexController.kaydet}" update="@form" oncomplete="PF('dlgSkart').hide();" value="Kaydet"></p:commandButton>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+
+	</ui:define>
+	
+</ui:composition>
